@@ -27,14 +27,16 @@
         ><Colorful :value="text"
       /></span>
       <template slot="footer">
-        <p>
+        <p class="data-statistic">
           本金：{{ moneySum }}, 余额：{{ balanceSum }}, 持仓收益率：<Colorful
             :value="roi"
           />
         </p>
-        <p>
-          预估余额：{{ expectBalanceSum }}, 今日预估收益: {{ expectProfit }},
-          预估持仓收益率：<Colorful :value="expectRoi" />
+        <p class="data-statistic">
+          预估余额：{{ expectBalanceSum }}, 今日预估收益:
+          <Colorful :value="expectProfit" />, 预估持仓收益率：<Colorful
+            :value="expectRoi"
+          />
         </p>
       </template>
     </a-table>
@@ -45,15 +47,11 @@
 import { Component, Vue } from "vue-property-decorator";
 import Colorful from "./Colorful.vue";
 import FundEquityService from "@/service/FundEquityService";
-import ATable from "ant-design-vue/lib/table";
-import "ant-design-vue/lib/table/style";
-import AIcon from "ant-design-vue/lib/icon";
-import "ant-design-vue/lib/icon/style";
+import { Table } from "ant-design-vue";
 @Component({
   components: {
     Colorful,
-    ATable,
-    AIcon
+    ATable: Table
   }
 })
 export default class FundList extends Vue {
@@ -266,5 +264,9 @@ export default class FundList extends Vue {
   &:hover {
     color: #3765ff;
   }
+}
+.data-statistic {
+  padding: 0;
+  margin: 10px;
 }
 </style>

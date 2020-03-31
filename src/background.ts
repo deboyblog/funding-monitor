@@ -1,10 +1,11 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, ipcMain  } from "electron";
 import {
   createProtocol
   /* installVueDevtools */
 } from "vue-cli-plugin-electron-builder/lib";
+import { ON_TOGGLE_TOP } from './constant/ipcEvent';
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -43,6 +44,16 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
+
+  // 监听置顶事件
+  ipcMain.on(ON_TOGGLE_TOP, (event, arg) => {
+    console.log(event, arg);
+    if (win) {
+      win.setAlwaysOnTop(arg);
+      event.returnValue = true;
+    }
+    event.returnValue = false;
+  })
 }
 
 // Quit when all windows are closed.
