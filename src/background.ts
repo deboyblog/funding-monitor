@@ -1,11 +1,11 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, ipcMain  } from "electron";
+import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import {
   createProtocol
   /* installVueDevtools */
 } from "vue-cli-plugin-electron-builder/lib";
-import { ON_TOGGLE_TOP } from './constant/ipcEvent';
+import { ON_TOGGLE_TOP } from "./constant/ipcEvent";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -53,7 +53,7 @@ function createWindow() {
       event.returnValue = true;
     }
     event.returnValue = false;
-  })
+  });
 }
 
 // Quit when all windows are closed.

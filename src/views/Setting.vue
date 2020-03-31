@@ -8,6 +8,6 @@ import { Component, Vue } from "vue-property-decorator";
 // import Storage from "../utils/storage";
 @Component({})
 export default class Setting extends Vue {
-  public mounted() {}
+  // public mounted() {}
 }
 </script>

@@ -14,5 +14,4 @@ const app = new Vue({
   store,
   render: h => h(App)
 });
-(window as any)._app = app;
 app.$mount("#app");
