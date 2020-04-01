@@ -3,7 +3,7 @@
 import { get } from "../utils/request";
 
 const getFundPriceUrl = (fundId: string) => {
-  return `https://fund.eastmoney.com/${fundId}.html`;
+  return `http://fund.eastmoney.com/${fundId}.html`;
 };
 type FiledOfEquityResponse =
   | "expectPositionProfit"

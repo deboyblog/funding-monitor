@@ -47,9 +47,8 @@ function createWindow() {
 
   // 监听置顶事件
   ipcMain.on(ON_TOGGLE_TOP, (event, arg) => {
-    console.log(event, arg);
     if (win) {
-      win.setAlwaysOnTop(arg);
+      win.setAlwaysOnTop(arg, 'modal-panel');
       event.returnValue = true;
     }
     event.returnValue = false;
