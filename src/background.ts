@@ -20,8 +20,8 @@ const isProd = process.env.NODE_ENV === "production";
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: isProd ? 950 : 1920,
-    height: isProd ? 330 : 1080,
+    width: 1920,
+    height: 1080,
     alwaysOnTop: false,
     title: "基金监控",
     webPreferences: {
@@ -48,7 +48,7 @@ function createWindow() {
   // 监听置顶事件
   ipcMain.on(ON_TOGGLE_TOP, (event, arg) => {
     if (win) {
-      win.setAlwaysOnTop(arg, 'modal-panel');
+      win.setAlwaysOnTop(arg, "modal-panel");
       event.returnValue = true;
     }
     event.returnValue = false;
