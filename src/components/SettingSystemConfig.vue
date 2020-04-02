@@ -29,7 +29,12 @@
         </template>
       </a-table>
     </div>
-    <AddFundModal v-if="visible" :value="form" @input="handleCreateOrModify" />
+    <!-- <collection-create-form
+      ref="collectionForm"
+      :visible="visible"
+      @cancel="handleCancel"
+      @create="handleCreate"
+    /> -->
   </div>
 </template>
 
@@ -38,17 +43,15 @@ import { Component, Vue } from "vue-property-decorator";
 import Storage from "../utils/storage";
 import { Table } from "ant-design-vue";
 import { CONFIG_FUND_LIST } from "@/constant/storage";
-import AddFundModal, { FundForm } from './AddFundModal.vue';
+
 @Component({
   components: {
-    [Table.name]: Table,
-    AddFundModal
+    [Table.name]: Table
   }
 })
 export default class SettingFundConfig extends Vue {
   public fundList = [];
   public visible = false;
-  public form = {};
   public columns = [
     {
       title: "基金代码",
@@ -106,15 +109,10 @@ export default class SettingFundConfig extends Vue {
   public handleCancel() {
     this.visible = false;
   }
-  public handleCreateOrModify(form: FundForm) {
-    console.log(form);
-    if (form.id) {
-      // TODO modify
-    } else {
-      // TODO add 
-    }
+  public handleCreate() {
+    // TODO
+    console.log();
   }
-
 
   public openSourcePage(url: string) {
     const { shell } = require("electron").remote;

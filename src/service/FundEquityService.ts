@@ -82,6 +82,14 @@ export default class FundEquityService {
       await this.start();
     }, this.delay);
   }
+  async getBaseData () {
+    if (this.updating) return;
+    const data = await this.getEquity();
+    if (data) {
+      this.data = data;
+    }
+    return data;
+  }
   public async getEquity(): Promise<EquityResponse | null> {
     const response: EquityResponse = {
       name: "--",
