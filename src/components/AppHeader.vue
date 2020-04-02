@@ -22,18 +22,18 @@
       </router-link>
     </div>
     <a-divider type="vertical" />
-    <div class="btn-item">
+    <!-- <div class="btn-item">
       <a-tooltip placement="bottom">
         <template slot="title">
-          <span>{{ isSimpleMode ? "退出" : "" }}简洁模式</span>
+          <span>{{ isSimple ? "退出" : "" }}简洁模式</span>
         </template>
         <a-icon
           @click="onToogleSimple"
-          :type="isSimpleMode ? 'fullscreen' : 'fullscreen-exit'"
+          :type="isSimple ? 'fullscreen' : 'fullscreen-exit'"
         />
       </a-tooltip>
     </div>
-    <a-divider type="vertical" />
+    <a-divider type="vertical" /> -->
     <div class="btn-item">
       <a-tooltip placement="bottom">
         <template slot="title">

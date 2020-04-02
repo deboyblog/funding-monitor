@@ -5,7 +5,7 @@ import {
   createProtocol
   /* installVueDevtools */
 } from "vue-cli-plugin-electron-builder/lib";
-import { ON_TOGGLE_TOP } from "./constant/ipcEvent";
+import { ON_TOGGLE_TOP, ON_TOGGLE_SIMPLE } from "./constant/ipcEvent";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -49,6 +49,18 @@ function createWindow() {
   ipcMain.on(ON_TOGGLE_TOP, (event, arg) => {
     if (win) {
       win.setAlwaysOnTop(arg, "modal-panel");
+      event.returnValue = true;
+    }
+    event.returnValue = false;
+  });
+  // 简洁模式
+  ipcMain.on(ON_TOGGLE_SIMPLE, (event, simple) => {
+    if (win) {
+      if (simple) {
+        win.setContentSize(300, 300);
+      } else {
+        win.setContentSize(1920, 1080);
+      }
       event.returnValue = true;
     }
     event.returnValue = false;
