@@ -63,7 +63,7 @@ export default class FundEquityService {
   public updating = false;
 
   // 抓取到的网页数据
-  public data: EquityResponse | {} = {};
+  public data: EquityResponse | null = null;
 
   constructor(id: string, positionEquity?: number, positionLot?: number) {
     this.id = id;
@@ -82,7 +82,7 @@ export default class FundEquityService {
       await this.start();
     }, this.delay);
   }
-  async getBaseData () {
+  async getBaseData() {
     if (this.updating) return;
     const data = await this.getEquity();
     if (data) {

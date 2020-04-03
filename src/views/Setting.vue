@@ -23,7 +23,7 @@ import { Tabs } from "ant-design-vue";
 })
 export default class Setting extends Vue {
   public onTabChange(tab: string) {
-    console.log("tab", tab);
+    // console.log("tab", tab);
   }
 }
 </script>

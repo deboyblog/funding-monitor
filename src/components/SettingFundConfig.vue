@@ -38,7 +38,7 @@ import { Component, Vue } from "vue-property-decorator";
 import Storage from "../utils/storage";
 import { Table } from "ant-design-vue";
 import { CONFIG_FUND_LIST } from "@/constant/storage";
-import AddFundModal, { FundForm } from './AddFundModal.vue';
+import AddFundModal, { FundForm } from "./AddFundModal.vue";
 @Component({
   components: {
     [Table.name]: Table,
@@ -107,14 +107,13 @@ export default class SettingFundConfig extends Vue {
     this.visible = false;
   }
   public handleCreateOrModify(form: FundForm) {
-    console.log(form);
+    // console.log(form);
     if (form.id) {
       // TODO modify
     } else {
-      // TODO add 
+      // TODO add
     }
   }
-
 
   public openSourcePage(url: string) {
     const { shell } = require("electron").remote;
@@ -126,7 +125,7 @@ export default class SettingFundConfig extends Vue {
     if (!dataStore) {
       this.fundList = [];
     } else {
-      console.log(dataStore);
+      // console.log(dataStore);
     }
   }
 

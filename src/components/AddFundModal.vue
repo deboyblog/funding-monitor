@@ -13,7 +13,7 @@
     </template>
     <div class="form">
       <a-input
-      class="input-item"
+        class="input-item"
         placeholder="基金代码"
         @keyup.enter="handleNext"
         :disabled="fundFetching || !!name"
@@ -125,7 +125,7 @@ export default class AppHeader extends Vue {
     }
   }
 }
-.input-item{
-    margin-top: 15px;
+.input-item {
+  margin-top: 15px;
 }
 </style>
