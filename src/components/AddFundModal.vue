@@ -12,25 +12,32 @@
       </a-button>
     </template>
     <div class="form">
-      <a-input
-        class="input-item"
-        placeholder="基金代码"
-        @keyup.enter="handleNext"
-        :disabled="fundFetching || !!name"
-        v-model="form.id"
-      />
-      <span class="name">{{ name }}</span>
-      <template v-if="name">
-        <a-input class="input-item" placeholder="持仓成本价" />
-        <a-input class="input-item" placeholder="持仓份数" />
-      </template>
+      <a-form
+        @submit.stop="handleNext"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 18 }"
+      >
+        <a-form-item label="基金代码">
+          <a-input v-model="form.id" />
+        </a-form-item>
+        <template v-if="name">
+          <a-form-item label="基金名称">
+            <a-input disabled :value="name" placeholder="基金名称" />
+          </a-form-item>
+          <a-form-item label="持仓成本价">
+            <a-input placeholder="如：1.0000" v-model="form.positionEquity" />
+          </a-form-item>
+          <a-form-item label="持仓份数">
+            <a-input placeholder="如：10000" v-model="form.positionLot" />
+          </a-form-item>
+        </template>
+      </a-form>
     </div>
   </a-modal>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { Modal, Tooltip, Input } from "ant-design-vue";
 import FundEquityService from "../service/FundEquityService";
 export interface FundForm {
   id: string;
@@ -38,18 +45,18 @@ export interface FundForm {
   positionLot?: string;
   positionEquity?: string;
 }
-@Component({
-  components: {
-    [Modal.name]: Modal,
-    [Input.name]: Input,
-    ATooltip: Tooltip
-  }
-})
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 }
+};
+@Component
 export default class AppHeader extends Vue {
   @Prop({
     type: Object
   })
   public value!: FundForm;
+
+  public formItemLayout = formItemLayout;
 
   public form: FundForm = {
     id: ""
@@ -80,6 +87,7 @@ export default class AppHeader extends Vue {
   }
 
   public get name() {
+    console.log(this.fundInstance);
     if (!this.fundInstance) {
       return "";
     }
@@ -93,6 +101,10 @@ export default class AppHeader extends Vue {
   }
 
   public handleNext() {
+    if (!this.form.id) {
+      this.$message.warn("请输入基金代码");
+      return false;
+    }
     if (this.name) {
       // 新增配置
       this.$emit("input", this.form);
@@ -126,6 +138,9 @@ export default class AppHeader extends Vue {
   }
 }
 .input-item {
-  margin-top: 15px;
+}
+.name {
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 </style>

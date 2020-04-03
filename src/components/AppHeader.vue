@@ -52,15 +52,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Divider, Tooltip } from "ant-design-vue";
 import { ON_TOGGLE_TOP, ON_TOGGLE_SIMPLE } from "../constant/ipcEvent";
 import { ipcRenderer } from "electron";
-@Component({
-  components: {
-    ADivider: Divider,
-    ATooltip: Tooltip
-  }
-})
+@Component
 export default class AppHeader extends Vue {
   public isTop = false;
   public isSimple = false;

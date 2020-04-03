@@ -92,7 +92,7 @@ export default class FundEquityService {
   }
   public async getEquity(): Promise<EquityResponse | null> {
     const response: EquityResponse = {
-      name: "--",
+      name: "",
       equity: "N/A",
       dayGrowthRate: "N/A",
       positionProfit: "N/A",
@@ -114,6 +114,10 @@ export default class FundEquityService {
     };
     this.updating = true;
     const { data } = await get(this.dataSource);
+    if (!data) {
+      this.updating = false;
+      return response;
+    }
     const nameReg = /<span\s+class="funCur-FundName">(.*?)<\/span>/;
     const nameRes = data.match(nameReg);
     if (nameRes && nameRes.length) {
