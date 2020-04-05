@@ -48,6 +48,9 @@ import { Component, Vue } from "vue-property-decorator";
 import Colorful from "./Colorful.vue";
 import FundEquityService from "@/service/FundEquityService";
 import { Table } from "ant-design-vue";
+import { CONFIG_FUND_LIST } from "@/constant/storage";
+import Storage from "@/utils/storage";
+import { FundForm } from "@/components/AddFundModal.vue";
 @Component({
   components: {
     Colorful,
@@ -55,38 +58,7 @@ import { Table } from "ant-design-vue";
   }
 })
 export default class FundList extends Vue {
-  public fundListConfig = [
-    {
-      id: "161723",
-      positionEquity: 1.0523,
-      positionLot: 40007.61
-    },
-    {
-      id: "008903",
-      positionEquity: 1.1166,
-      positionLot: 15224.78
-    },
-    {
-      id: "002969",
-      positionEquity: 1.2459,
-      positionLot: 12683.45
-    },
-    {
-      id: "486001",
-      positionEquity: 1.2179,
-      positionLot: 4105.27
-    },
-    {
-      id: "110022",
-      positionEquity: 2.8674,
-      positionLot: 1046.26
-    },
-    {
-      id: "161725",
-      positionEquity: 0.9152,
-      positionLot: 1639.05
-    }
-  ];
+  public fundListConfig: FundForm = [];
   public columns = [
     {
       title: "基金名称",
@@ -249,7 +221,16 @@ export default class FundList extends Vue {
       priceService.start();
     }
   }
+  public initFundList() {
+    const fundList = Storage.get(CONFIG_FUND_LIST);
+    if (fundList && fundList.length) {
+      this.fundListConfig = fundList;
+    } else {
+      this.fundListConfig = [];
+    }
+  }
   public mounted() {
+    this.initFundList();
     this.initPriceServices();
   }
 }

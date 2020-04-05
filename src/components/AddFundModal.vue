@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :title="title" onOk="handleOk">
+  <a-modal v-model="dialogVisible" :title="title">
     <template slot="footer">
       <a-button key="back" @click="handlePrev" v-if="name">上一步</a-button>
       <a-button
@@ -8,7 +8,7 @@
         :loading="fundFetching"
         @click="handleNext"
       >
-        下一步
+        {{ !!name ? "完成" : "下一步" }}
       </a-button>
     </template>
     <div class="form">
@@ -18,17 +18,27 @@
         :wrapper-col="{ span: 18 }"
       >
         <a-form-item label="基金代码">
-          <a-input v-model="form.id" />
+          <a-input v-model="form.id" :disabled="!!name" />
         </a-form-item>
         <template v-if="name">
           <a-form-item label="基金名称">
             <a-input disabled :value="name" placeholder="基金名称" />
           </a-form-item>
           <a-form-item label="持仓成本价">
-            <a-input placeholder="如：1.0000" v-model="form.positionEquity" />
+            <a-input
+              type="number"
+              :step="0.0001"
+              placeholder="如：1.0000"
+              v-model="form.positionEquity"
+            />
           </a-form-item>
           <a-form-item label="持仓份数">
-            <a-input placeholder="如：10000" v-model="form.positionLot" />
+            <a-input
+              type="number"
+              :step="0.01"
+              placeholder="如：10000"
+              v-model="form.positionLot"
+            />
           </a-form-item>
         </template>
       </a-form>
@@ -45,77 +55,108 @@ export interface FundForm {
   positionLot?: string;
   positionEquity?: string;
 }
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 }
-};
+
 @Component
-export default class AppHeader extends Vue {
+export default class AddFundModal extends Vue {
   @Prop({
     type: Object
   })
   public value!: FundForm;
 
-  public formItemLayout = formItemLayout;
+  @Prop({
+    type: Boolean,
+    default: () => {
+      return false;
+    }
+  })
+  public visible!: boolean;
 
   public form: FundForm = {
     id: ""
   };
 
-  public visible = true;
+  public dialogVisible = this.visible;
 
   public get title() {
     return (this.value.id ? "编辑" : "新增") + "基金信息";
   }
   public fundInstance: FundEquityService | null = null;
 
-  @Watch("value")
-  public onValueChange(value: FundForm) {
-    this.form = value;
-  }
-  public initFund() {
-    this.fundInstance = new FundEquityService(this.form.id);
-    this.fundInstance.getBaseData();
-  }
-
   public get fundFetching() {
     if (!this.fundInstance) return false;
     return this.fundInstance.updating;
   }
-  public destroyFund() {
-    this.fundInstance = null;
-  }
-
   public get name() {
-    console.log(this.fundInstance);
     if (!this.fundInstance) {
       return "";
     }
     return this.fundInstance.data && this.fundInstance.data.name;
   }
 
-  public isTop = false;
+  @Watch("dialogVisible")
+  public onDialogVisibleChange(visible: boolean) {
+    if (!visible && visible !== this.visible) {
+      this.$emit("cancel");
+    }
+  }
+
+  @Watch("visible")
+  public onVisibleChange(visible: boolean) {
+    this.dialogVisible = visible;
+    if (visible && this.value.id) {
+      this.onValueChange(this.value);
+    } else {
+      this.resetForm();
+    }
+  }
+
+  @Watch("value")
+  public onValueChange(value: FundForm) {
+    if (value.id) {
+      this.form = Object.assign({}, value);
+      this.initFund();
+    } else {
+      this.resetForm();
+    }
+  }
+
+  public resetForm() {
+    this.form = {
+      id: ""
+    };
+    this.destroyFund();
+  }
+
+  public async initFund() {
+    if (!this.form.id) return;
+    this.fundInstance = new FundEquityService(this.form.id);
+    return await this.fundInstance.getBaseData();
+  }
+
+  public destroyFund() {
+    this.fundInstance = null;
+  }
 
   public handlePrev() {
     this.destroyFund();
   }
 
-  public handleNext() {
+  public async handleNext() {
     if (!this.form.id) {
       this.$message.warn("请输入基金代码");
       return false;
     }
     if (this.name) {
       // 新增配置
-      this.$emit("input", this.form);
+      this.$emit("input", Object.assign({}, this.form, { name: this.name }));
     } else {
       // 获取名字
-      this.initFund();
+      await this.initFund();
     }
   }
 
-  public handleOk() {
-    console.log("ok");
+  public close() {
+    this.$emit("cancel");
   }
 }
 </script>

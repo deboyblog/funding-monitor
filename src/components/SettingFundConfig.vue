@@ -12,24 +12,26 @@
         :pagination="false"
         :columns="columns"
       >
-        <template slot="name" slot-scope="text, record">
-          <editable-cell
-            :text="text"
-            @change="onCellChange(record.key, 'name', $event)"
-          />
-        </template>
         <template slot="operation" slot-scope="text, record">
+          <a href="javascript:;" @click="handleEdit(record)">编辑</a>
+          <a-divider type="vertical" />
           <a-popconfirm
-            v-if="dataSource.length"
-            title="Sure to delete?"
-            @confirm="() => onDelete(record.key)"
+            title="确认删除吗?"
+            cancelText="不了"
+            okText="删除"
+            @confirm="() => handleDelete(record)"
           >
-            <a href="javascript:;">Delete</a>
+            <a href="javascript:;">删除</a>
           </a-popconfirm>
         </template>
       </a-table>
     </div>
-    <AddFundModal v-if="visible" :value="form" @input="handleCreateOrModify" />
+    <AddFundModal
+      :visible="visible"
+      :value="form"
+      @cancel="handleCancel"
+      @input="handleCreateOrModify"
+    />
   </div>
 </template>
 
@@ -39,6 +41,13 @@ import Storage from "../utils/storage";
 import { Table } from "ant-design-vue";
 import { CONFIG_FUND_LIST } from "@/constant/storage";
 import AddFundModal, { FundForm } from "./AddFundModal.vue";
+interface FundConfig {
+  id: string;
+  name: string;
+  positionLots?: string | number;
+  positionEquity?: string | number;
+}
+
 @Component({
   components: {
     [Table.name]: Table,
@@ -46,8 +55,9 @@ import AddFundModal, { FundForm } from "./AddFundModal.vue";
   }
 })
 export default class SettingFundConfig extends Vue {
-  public fundList = [];
+  public fundList: FundConfig[] = [];
   public visible = false;
+  public currentRow: FundConfig | null = null;
   public form = {};
   public columns = [
     {
@@ -65,59 +75,63 @@ export default class SettingFundConfig extends Vue {
     {
       title: "持仓份数",
       dataIndex: "positionLot"
-    }
-  ];
-  public fundListConfig = [
-    {
-      id: "161723",
-      positionEquity: 1.0523,
-      positionLot: 40007.61
     },
     {
-      id: "008903",
-      positionEquity: 1.1166,
-      positionLot: 15224.78
-    },
-    {
-      id: "002969",
-      positionEquity: 1.2459,
-      positionLot: 12683.45
-    },
-    {
-      id: "486001",
-      positionEquity: 1.2179,
-      positionLot: 4105.27
-    },
-    {
-      id: "110022",
-      positionEquity: 2.8674,
-      positionLot: 1046.26
-    },
-    {
-      id: "161725",
-      positionEquity: 0.9152,
-      positionLot: 1639.05
+      title: "操作",
+      key: "operation",
+      scopedSlots: { customRender: "operation" }
     }
   ];
 
   public toggleModal() {
-    this.visible = true;
+    this.visible = !this.visible;
   }
   public handleCancel() {
-    this.visible = false;
+    this.currentRow = null;
+    this.form = {};
+    this.toggleModal();
   }
-  public handleCreateOrModify(form: FundForm) {
-    // console.log(form);
-    if (form.id) {
-      // TODO modify
+  public handleCreateOrModify(form: FundConfig) {
+    if (this.currentRow !== null) {
+      const index = this.fundList.findIndex(
+        item => item.id === (this.currentRow as FundConfig).id
+      );
+      if (index >= 0) {
+        this.$set(this.fundList, index, form);
+      } else {
+        this.$message.warn("未找到原记录，请点击右侧刷新数据按钮");
+      }
     } else {
-      // TODO add
+      const index = this.fundList.findIndex(item => item.id === form.id);
+      if (index >= 0) {
+        this.$message.warn("请勿添加两个同样基金代码的配置");
+        return;
+      }
+      this.fundList.push(form);
     }
+    this.updateStorage();
+    this.currentRow = null;
+    this.form = {};
+    this.toggleModal();
   }
-
+  public handleEdit(fundConfigItem: FundConfig) {
+    this.currentRow = this.form = fundConfigItem;
+    this.toggleModal();
+  }
+  public handleDelete(fundConfigItem: FundConfig) {
+    const index = this.fundList.findIndex(
+      item => item.id === fundConfigItem.id
+    );
+    this.fundList.splice(index, 1);
+    this.updateStorage();
+  }
   public openSourcePage(url: string) {
     const { shell } = require("electron").remote;
     shell.openExternal(url);
+  }
+
+  public updateStorage() {
+    Storage.set(CONFIG_FUND_LIST, this.fundList);
   }
 
   public initData() {
@@ -125,7 +139,7 @@ export default class SettingFundConfig extends Vue {
     if (!dataStore) {
       this.fundList = [];
     } else {
-      // console.log(dataStore);
+      this.fundList = dataStore;
     }
   }
 
