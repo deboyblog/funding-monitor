@@ -52,8 +52,8 @@ import FundEquityService from "../service/FundEquityService";
 export interface FundForm {
   id: string;
   name?: string;
-  positionLot?: string;
-  positionEquity?: string;
+  positionLot?: number;
+  positionEquity?: number;
 }
 
 @Component

@@ -58,7 +58,7 @@ import { FundForm } from "@/components/AddFundModal.vue";
   }
 })
 export default class FundList extends Vue {
-  public fundListConfig: FundForm = [];
+  public fundListConfig: FundForm[] = [];
   public columns = [
     {
       title: "基金名称",
