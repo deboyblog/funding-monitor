@@ -84,13 +84,13 @@ export default class AddFundModal extends Vue {
 
   public get fundFetching() {
     if (!this.fundInstance) return false;
-    return this.fundInstance.updating;
+    return this.fundInstance.loading;
   }
   public get name() {
     if (!this.fundInstance) {
       return "";
     }
-    return this.fundInstance.data && this.fundInstance.data.name;
+    return this.fundInstance.result && this.fundInstance.result.name;
   }
 
   @Watch("dialogVisible")
@@ -130,7 +130,7 @@ export default class AddFundModal extends Vue {
   public async initFund() {
     if (!this.form.id) return;
     this.fundInstance = new FundEquityService(this.form.id);
-    return await this.fundInstance.getBaseData();
+    return await this.fundInstance.start(false);
   }
 
   public destroyFund() {

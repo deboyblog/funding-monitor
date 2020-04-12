@@ -1,131 +1,73 @@
 <template>
-  <div class="fund-config">
-    <div class="header">
-      <a-button class="create-btn" type="primary" @click="toggleModal">
-        新增基金
-      </a-button>
-    </div>
-    <div class="fund-list">
-      <a-table
-        bordered
-        :dataSource="fundList"
-        :pagination="false"
-        :columns="columns"
+  <div class="system-config">
+    <div class="menu">
+      <a-menu
+        style="width: 256px"
+        :defaultSelectedKeys="current"
+        :openKeys.sync="openKeys"
+        mode="inline"
       >
-        <template slot="name" slot-scope="text, record">
-          <editable-cell
-            :text="text"
-            @change="onCellChange(record.key, 'name', $event)"
-          />
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <a-popconfirm
-            v-if="dataSource.length"
-            title="Sure to delete?"
-            @confirm="() => onDelete(record.key)"
+        <a-sub-menu key="m1">
+          <span slot="title"
+            ><a-icon type="setting" /><span>基金配置</span></span
           >
-            <a href="javascript:;">Delete</a>
-          </a-popconfirm>
-        </template>
-      </a-table>
+          <a-menu-item key="1">数据源</a-menu-item>
+        </a-sub-menu>
+      </a-menu>
     </div>
-    <!-- <collection-create-form
-      ref="collectionForm"
-      :visible="visible"
-      @cancel="handleCancel"
-      @create="handleCreate"
-    /> -->
+    <div class="config-body">
+      <template v-if="currentMenu === '1'">
+        <ConfigFundSource v-model="systemConfig.dataSource" />
+      </template>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import Storage from "../utils/storage";
-import { Table } from "ant-design-vue";
-import { CONFIG_FUND_LIST } from "@/constant/storage";
+import { Menu } from "ant-design-vue";
+import { CONFIG_SYSTEM } from "@/constant/storage";
+import ConfigFundSource from "./ConfigFundSource.vue";
+import { CrawlerEnum } from "@/crawler";
 
 @Component({
   components: {
-    [Table.name]: Table
+    [Menu.name]: Menu,
+    [Menu.Item.name]: Menu.Item,
+    [Menu.SubMenu.name]: Menu.SubMenu,
+    ConfigFundSource
   }
 })
-export default class SettingFundConfig extends Vue {
-  public fundList = [];
-  public visible = false;
-  public columns = [
-    {
-      title: "基金代码",
-      dataIndex: "id"
-    },
-    {
-      title: "基金名称",
-      dataIndex: "name"
-    },
-    {
-      title: "持仓净值",
-      dataIndex: "positionEquity"
-    },
-    {
-      title: "持仓份数",
-      dataIndex: "positionLot"
-    }
-  ];
-  public fundListConfig = [
-    {
-      id: "161723",
-      positionEquity: 1.0523,
-      positionLot: 40007.61
-    },
-    {
-      id: "008903",
-      positionEquity: 1.1166,
-      positionLot: 15224.78
-    },
-    {
-      id: "002969",
-      positionEquity: 1.2459,
-      positionLot: 12683.45
-    },
-    {
-      id: "486001",
-      positionEquity: 1.2179,
-      positionLot: 4105.27
-    },
-    {
-      id: "110022",
-      positionEquity: 2.8674,
-      positionLot: 1046.26
-    },
-    {
-      id: "161725",
-      positionEquity: 0.9152,
-      positionLot: 1639.05
-    }
-  ];
+export default class SettingConfig extends Vue {
+  public systemConfig: { [key: string]: string } = {};
+  public isReady = false;
+  public current = ["1"];
+  public openKeys = ["m1"];
 
-  public toggleModal() {
-    this.visible = true;
-  }
-  public handleCancel() {
-    this.visible = false;
-  }
-  public handleCreate() {
-    // TODO
-    console.log();
+  public get currentMenu() {
+    return this.current[0];
   }
 
-  public openSourcePage(url: string) {
-    const { shell } = require("electron").remote;
-    shell.openExternal(url);
+  @Watch("systemConfig", {
+    deep: true
+  })
+  public onSystemConfigChange(config: { [key: string]: string }) {
+    if (this.isReady) {
+      Storage.set(CONFIG_SYSTEM, config);
+    }
   }
 
   public initData() {
-    const dataStore = Storage.get(CONFIG_FUND_LIST);
-    if (!dataStore) {
-      this.fundList = [];
+    const systemConfig = Storage.get(CONFIG_SYSTEM);
+    if (!systemConfig) {
+      this.systemConfig = {
+        dataSource: CrawlerEnum.Flush
+      };
     } else {
-      console.log(dataStore);
+      this.systemConfig = systemConfig;
     }
+    this.isReady = true;
   }
 
   public mounted() {
@@ -135,19 +77,11 @@ export default class SettingFundConfig extends Vue {
 </script>
 
 <style scoped lang="less">
-.fund-config {
+.system-config {
   display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 0 20px;
-}
-.header {
-  text-align: right;
-  .create-btn {
-    width: 100px;
+  flex-direction: row;
+  .config-body {
+    flex: 1;
   }
-}
-.fund-list {
-  margin-top: 15px;
 }
 </style>

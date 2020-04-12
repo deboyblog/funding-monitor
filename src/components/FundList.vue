@@ -8,9 +8,9 @@
       :pagination="false"
     >
       <template slot="name" slot-scope="text, record">
-        <a-icon type="loading" v-if="record.updating" />
+        <a-icon type="loading" v-if="record.loading" />
         <a-icon type="reload" v-else @click="record.start()" />
-        <span class="fund-name" @click="openSourcePage(record.dataSource)">
+        <span class="fund-name" @click="openSourcePage(record.fundViewUrl)">
           {{ text }}
         </span>
       </template>
@@ -33,9 +33,9 @@
           />
         </p>
         <p class="data-statistic">
-          预估余额：{{ expectBalanceSum }}, 今日预估收益:
-          <Colorful :value="expectProfit" />, 预估持仓收益率：<Colorful
-            :value="expectRoi"
+          预估余额：{{ predictBalanceSum }}, 今日预估收益:
+          <Colorful :value="predictProfit" />, 预估持仓收益率：<Colorful
+            :value="predictRoi"
           />
         </p>
       </template>
@@ -62,36 +62,36 @@ export default class FundList extends Vue {
   public columns = [
     {
       title: "基金名称",
-      dataIndex: "data.name",
+      dataIndex: "result.name",
       key: "name",
       scopedSlots: { customRender: "name" }
     },
     {
       title: "当前净值",
-      dataIndex: "data.equity",
+      dataIndex: "result.equity",
       key: "equity"
     },
     {
       title: "涨/跌幅",
-      dataIndex: "data.dayGrowthRate",
+      dataIndex: "result.dayGrowthRate",
       key: "dayGrowthRate",
       scopedSlots: { customRender: "dayGrowthRate" }
     },
     {
       title: "预估净值",
-      dataIndex: "data.expectEquity",
-      key: "expectEquity"
+      dataIndex: "result.predictEquity",
+      key: "predictEquity"
     },
     {
       title: "预估跌/涨",
-      dataIndex: "data.expectDiff",
-      key: "expectDiff",
-      scopedSlots: { customRender: "expectDiff" }
+      dataIndex: "result.predictDiff",
+      key: "predictDiff",
+      scopedSlots: { customRender: "predictDiff" }
     },
     {
       title: "预估涨/跌幅",
-      dataIndex: "data.expectDayGrowthRate",
-      key: "expectDayGrowthRate",
+      dataIndex: "result.predictDayGrowthRate",
+      key: "predictDayGrowthRate",
       scopedSlots: { customRender: "dayGrowthRate" }
     },
     {
@@ -101,46 +101,46 @@ export default class FundList extends Vue {
     },
     {
       title: "持仓成本",
-      dataIndex: "data.positionMoney",
+      dataIndex: "result.positionMoney",
       key: "positionMoney"
     },
     {
       title: "收益",
-      dataIndex: "data.positionProfit",
+      dataIndex: "result.positionProfit",
       key: "positionProfit",
       scopedSlots: { customRender: "positionProfit" }
     },
     {
       title: "收益率",
-      dataIndex: "data.positionROI",
+      dataIndex: "result.positionROI",
       key: "positionROI",
       scopedSlots: { customRender: "positionROI" }
     },
     {
       title: "余额",
-      dataIndex: "data.positionBalance",
+      dataIndex: "result.positionBalance",
       key: "positionBalance"
     },
     {
       title: "预估收益",
-      dataIndex: "data.expectPositionProfit",
-      key: "expectPositionProfit",
+      dataIndex: "result.predictPositionProfit",
+      key: "predictPositionProfit",
       scopedSlots: { customRender: "positionProfit" }
     },
     {
       title: "预估收益率",
-      dataIndex: "data.expectPositionROI",
-      key: "expectPositionROI",
+      dataIndex: "result.predictPositionROI",
+      key: "predictPositionROI",
       scopedSlots: { customRender: "positionROI" }
     },
     {
       title: "预估余额",
-      dataIndex: "data.expectPositionBalance",
-      key: "expectPositionBalance"
+      dataIndex: "result.predictPositionBalance",
+      key: "predictPositionBalance"
     },
     {
       title: "近1月",
-      dataIndex: "data.lastOneMonth",
+      dataIndex: "result.lastOneMonth",
       key: "lastOneMonth",
       scopedSlots: { customRender: "lastOneMonth" }
     }
@@ -158,32 +158,32 @@ export default class FundList extends Vue {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.fundListServices
       .reduce((current, service: any) => {
-        if (!service.data || isNaN(+service.data.positionBalance)) {
+        if (!service.result || isNaN(+service.result.positionBalance)) {
           return current;
         }
-        return +service.data.positionBalance + current;
+        return +service.result.positionBalance + current;
       }, 0)
       .toFixed(2);
   }
-  public get expectRoi() {
+  public get predictRoi() {
     return (
       (
-        ((+this.expectBalanceSum - +this.moneySum) / +this.moneySum) *
+        ((+this.predictBalanceSum - +this.moneySum) / +this.moneySum) *
         100
       ).toFixed(2) + "%"
     );
   }
-  public get expectProfit() {
-    return (+this.expectBalanceSum - +this.balanceSum).toFixed(2);
+  public get predictProfit() {
+    return (+this.predictBalanceSum - +this.balanceSum).toFixed(2);
   }
-  public get expectBalanceSum() {
+  public get predictBalanceSum() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.fundListServices
       .reduce((current, service: any) => {
-        if (!service.data || isNaN(+service.data.expectPositionBalance)) {
+        if (!service.result || isNaN(+service.result.predictPositionBalance)) {
           return current;
         }
-        return +service.data.expectPositionBalance + current;
+        return +service.result.predictPositionBalance + current;
       }, 0)
       .toFixed(2);
   }
@@ -192,13 +192,13 @@ export default class FundList extends Vue {
     return this.fundListServices
       .reduce((current, service: any) => {
         if (
-          !service.data ||
-          !service.data.positionMoney ||
-          isNaN(+service.data.positionMoney)
+          !service.result ||
+          !service.result.positionMoney ||
+          isNaN(+service.result.positionMoney)
         ) {
           return current;
         }
-        return +service.data.positionMoney + current;
+        return +service.result.positionMoney + current;
       }, 0)
       .toFixed(2);
   }
@@ -208,7 +208,7 @@ export default class FundList extends Vue {
     shell.openExternal(url);
   }
 
-  public initPriceServices() {
+  public initFundServices() {
     for (const fund of this.fundListConfig) {
       this.fundListServices.push(
         new FundEquityService(fund.id, fund.positionEquity, fund.positionLot)
@@ -231,7 +231,7 @@ export default class FundList extends Vue {
   }
   public mounted() {
     this.initFundList();
-    this.initPriceServices();
+    this.initFundServices();
   }
 }
 </script>
