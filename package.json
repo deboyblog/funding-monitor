@@ -1,7 +1,7 @@
 {
   "name": "funding-monitor",
   "description": "抓取最新数据结合持仓信息查看最新的收益情况，是你最佳的基金管家",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "scripts": {
     "dev": "vue-cli-service electron:serve",
