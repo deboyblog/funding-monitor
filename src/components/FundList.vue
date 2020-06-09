@@ -30,13 +30,13 @@
         <p class="data-statistic">
           本金：{{ moneySum }}, 余额：{{ balanceSum }}, 持仓收益率：<Colorful
             :value="roi"
-          />
+          />, 持仓收益：<Colorful :value="positionProfit" />
         </p>
         <p class="data-statistic">
           预估余额：{{ predictBalanceSum }}, 今日预估收益:
           <Colorful :value="predictProfit" />, 预估持仓收益率：<Colorful
             :value="predictRoi"
-          />
+          />, 预估持仓收益：<Colorful :value="predictPositionProfit" />
         </p>
       </template>
     </a-table>
@@ -148,11 +148,10 @@ export default class FundList extends Vue {
   public fundListServices: FundEquityService[] = [];
 
   public get roi() {
-    return (
-      (((+this.balanceSum - +this.moneySum) / +this.moneySum) * 100).toFixed(
-        2
-      ) + "%"
-    );
+    return ((+this.positionProfit / +this.moneySum) * 100).toFixed(2) + "%";
+  }
+  public get positionProfit() {
+    return (+this.balanceSum - +this.moneySum).toFixed(2);
   }
   public get balanceSum() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -186,6 +185,9 @@ export default class FundList extends Vue {
         return +service.result.predictPositionBalance + current;
       }, 0)
       .toFixed(2);
+  }
+  public get predictPositionProfit() {
+    return (+this.predictBalanceSum - +this.moneySum).toFixed(2);
   }
   public get moneySum() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
