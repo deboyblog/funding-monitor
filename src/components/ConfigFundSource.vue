@@ -47,7 +47,11 @@ export default class ConfigFundSource extends Vue {
       value: CrawlerEnum.EastMoney
     }
   ];
-  public onChange(value: any) {
+  public onChange(value: {
+    target: {
+      value: string;
+    };
+  }) {
     this.$emit("input", value.target.value);
   }
 }

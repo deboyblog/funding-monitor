@@ -58,7 +58,7 @@ export default class SettingFundConfig extends Vue {
   public fundList: FundConfig[] = [];
   public visible = false;
   public currentRow: FundConfig | null = null;
-  public form = {};
+  public form: FundForm | {} = {};
   public columns = [
     {
       title: "基金代码",

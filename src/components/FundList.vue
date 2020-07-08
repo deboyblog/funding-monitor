@@ -154,9 +154,8 @@ export default class FundList extends Vue {
     return (+this.balanceSum - +this.moneySum).toFixed(2);
   }
   public get balanceSum() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.fundListServices
-      .reduce((current, service: any) => {
+      .reduce((current, service: FundEquityService) => {
         if (!service.result || isNaN(+service.result.positionBalance)) {
           return current;
         }
@@ -176,9 +175,8 @@ export default class FundList extends Vue {
     return (+this.predictBalanceSum - +this.balanceSum).toFixed(2);
   }
   public get predictBalanceSum() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.fundListServices
-      .reduce((current, service: any) => {
+      .reduce((current, service: FundEquityService) => {
         if (!service.result || isNaN(+service.result.predictPositionBalance)) {
           return current;
         }
@@ -190,9 +188,8 @@ export default class FundList extends Vue {
     return (+this.predictBalanceSum - +this.moneySum).toFixed(2);
   }
   public get moneySum() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.fundListServices
-      .reduce((current, service: any) => {
+      .reduce((current, service: FundEquityService) => {
         if (
           !service.result ||
           !service.result.positionMoney ||
