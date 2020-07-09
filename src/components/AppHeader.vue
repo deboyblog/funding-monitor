@@ -28,7 +28,7 @@
           <span>{{ isSimple ? "退出" : "" }}简洁模式</span>
         </template>
         <a-icon
-          @click="onToogleSimple"
+          @click="onToggleSimple"
           :type="isSimple ? 'fullscreen' : 'fullscreen-exit'"
         />
       </a-tooltip>
@@ -52,12 +52,12 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ON_TOGGLE_TOP, ON_TOGGLE_SIMPLE } from "@/constant/ipcEvent";
+import { ON_TOGGLE_TOP } from "@/constant/ipcEvent";
 import { ipcRenderer } from "electron";
 @Component
 export default class AppHeader extends Vue {
   public isTop = false;
-  public isSimple = false;
+  // public isSimple = false;
   public onToggleTop() {
     const res = ipcRenderer.sendSync(ON_TOGGLE_TOP, !this.isTop);
     if (res) {
@@ -67,14 +67,14 @@ export default class AppHeader extends Vue {
       this.$message.error("窗口置顶失败");
     }
   }
-  public onToogleSimple() {
-    const res = ipcRenderer.sendSync(ON_TOGGLE_SIMPLE, !this.isSimple);
-    if (res) {
-      this.isSimple = !this.isSimple;
-    } else {
-      this.$message.error("进入简洁模式失败");
-    }
-  }
+  // public onToggleSimple() {
+  //   const res = ipcRenderer.sendSync(ON_TOGGLE_SIMPLE, !this.isSimple);
+  //   if (res) {
+  //     this.isSimple = !this.isSimple;
+  //   } else {
+  //     this.$message.error("进入简洁模式失败");
+  //   }
+  // }
 }
 </script>
 

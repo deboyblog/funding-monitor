@@ -5,6 +5,7 @@
       :columns="columns"
       :dataSource="fundListServices"
       bordered
+      rowKey="id"
       :pagination="false"
     >
       <template slot="name" slot-scope="text, record">
@@ -63,85 +64,70 @@ export default class FundList extends Vue {
     {
       title: "基金名称",
       dataIndex: "result.name",
-      key: "name",
       scopedSlots: { customRender: "name" }
     },
     {
       title: "当前净值",
-      dataIndex: "result.equity",
-      key: "equity"
+      dataIndex: "result.equity"
     },
     {
       title: "涨/跌幅",
       dataIndex: "result.dayGrowthRate",
-      key: "dayGrowthRate",
       scopedSlots: { customRender: "dayGrowthRate" }
     },
     {
       title: "预估净值",
-      dataIndex: "result.predictEquity",
-      key: "predictEquity"
+      dataIndex: "result.predictEquity"
     },
     {
       title: "预估跌/涨",
       dataIndex: "result.predictDiff",
-      key: "predictDiff",
       scopedSlots: { customRender: "predictDiff" }
     },
     {
       title: "预估涨/跌幅",
       dataIndex: "result.predictDayGrowthRate",
-      key: "predictDayGrowthRate",
       scopedSlots: { customRender: "dayGrowthRate" }
     },
     {
       title: "持仓价",
-      dataIndex: "positionEquity",
-      key: "positionEquity"
+      dataIndex: "positionEquity"
     },
     {
       title: "持仓成本",
-      dataIndex: "result.positionMoney",
-      key: "positionMoney"
+      dataIndex: "result.positionMoney"
     },
     {
       title: "收益",
       dataIndex: "result.positionProfit",
-      key: "positionProfit",
       scopedSlots: { customRender: "positionProfit" }
     },
     {
       title: "收益率",
       dataIndex: "result.positionROI",
-      key: "positionROI",
       scopedSlots: { customRender: "positionROI" }
     },
     {
       title: "余额",
-      dataIndex: "result.positionBalance",
-      key: "positionBalance"
+      dataIndex: "result.positionBalance"
     },
     {
       title: "预估收益",
       dataIndex: "result.predictPositionProfit",
-      key: "predictPositionProfit",
       scopedSlots: { customRender: "positionProfit" }
     },
     {
       title: "预估收益率",
       dataIndex: "result.predictPositionROI",
-      key: "predictPositionROI",
       scopedSlots: { customRender: "positionROI" }
     },
     {
       title: "预估余额",
-      dataIndex: "result.predictPositionBalance",
-      key: "predictPositionBalance"
+      dataIndex: "result.predictPositionBalance"
     },
     {
       title: "近1月",
       dataIndex: "result.lastOneMonth",
-      key: "lastOneMonth",
       scopedSlots: { customRender: "lastOneMonth" }
     }
   ];

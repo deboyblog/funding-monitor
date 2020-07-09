@@ -10,6 +10,7 @@
         bordered
         :dataSource="fundList"
         :pagination="false"
+        rowKey="id"
         :columns="columns"
       >
         <template slot="operation" slot-scope="text, record">

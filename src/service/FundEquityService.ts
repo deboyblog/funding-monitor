@@ -1,8 +1,10 @@
 /* eslint-disable no-cond-assign */
 /* eslint-disable no-unused-vars */
 import Crawler, { BaseCrawler, CrawlerEnum, EquityResponse } from "../crawler";
+import { v4 as uuidv4 } from "uuid";
 import Storage from "../utils/storage";
 import { CONFIG_SYSTEM } from "@/constant/storage";
+
 export interface FundResultResponse {
   name: string;
   equity: string | number;
@@ -25,6 +27,7 @@ export interface FundResultResponse {
   predictPositionBalance: string | number;
 }
 export default class FundEquityService {
+  public id = "";
   // 持仓净值（成本）
   public positionEquity = 0;
   // 持仓份额
@@ -70,6 +73,7 @@ export default class FundEquityService {
       const CurrentCrawler = Crawler[_crawlerName];
       this.crawlerInstance = new CurrentCrawler(id);
     }
+    this.id = uuidv4();
     this.positionEquity = positionEquity || 0;
     this.positionLot = positionLot || 0;
   }

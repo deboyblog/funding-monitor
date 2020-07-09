@@ -5,5 +5,10 @@ module.exports = {
         javascriptEnabled: true
       }
     }
+  },
+  pluginOptions: {
+    electronBuilder: {
+      nodeIntegration: true
+    }
   }
 };
