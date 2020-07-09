@@ -1,10 +1,8 @@
 "use strict";
 
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
-import {
-  createProtocol
-  /* installVueDevtools */
-} from "vue-cli-plugin-electron-builder/lib";
+import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
+import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { ON_TOGGLE_TOP, ON_TOGGLE_SIMPLE } from "./constant/ipcEvent";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -16,7 +14,6 @@ let win: BrowserWindow | null;
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
-const isProd = process.env.NODE_ENV === "production";
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -25,7 +22,10 @@ function createWindow() {
     alwaysOnTop: false,
     title: "基金监控",
     webPreferences: {
-      nodeIntegration: true,
+      // Use pluginOptions.nodeIntegration, leave this alone
+      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+      nodeIntegration: (process.env
+        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       webviewTag: true,
       webSecurity: false
     }
@@ -66,6 +66,8 @@ function createWindow() {
     event.returnValue = false;
   });
 }
+// Electron 9.0.0 webSecurity option no longer disables CORS detail: https://github.com/electron/electron/issues/23664
+app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
@@ -90,16 +92,11 @@ app.on("activate", () => {
 app.on("ready", async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
+    try {
+      await installExtension(VUEJS_DEVTOOLS);
+    } catch (e) {
+      console.error("Vue Devtools failed to install:", e.toString());
+    }
   }
   createWindow();
 });
